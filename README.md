@@ -211,7 +211,7 @@ The possible error codes and their corresponding messages are listed below in ca
 * `invalid_ids` - One or more of the IDs supplied were not valid.
 * `not_logged` - Could not log track play. Please try again.
 * `no_token` - Could not retrieve play token.
-* `skip_failed` - Could not skip track.
+* `skip_failed` - Could not skip track. (this does not fire if the `newMix` parameter is set to true and the track cannot be skipped)
 * `next_failed` - Could not retrieve next track.
 * `next_mix_failed` - Could not retrieve next mix.
 * `find_mix_failed` - Could not retrieve specified mix.
