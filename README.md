@@ -51,7 +51,7 @@ You should check each event's response for an error like so:
         }
     });
 
-When the plug-in encounters an error, it will always trigger the `eightTracksError` event and send the error code to that event's listener. This is useful if you want to log errors or perform some sort of connection status checks when an error is encountered.
+When the plug-in encounters an error, it will always trigger the `eightTracksError` event and send the error code and error message to that event's listener. This is useful if you want to log errors or perform some sort of connection status checks when an error is encountered.
 
     $('body').on('eightTracksError', function(e, code, message) {
         console.log(code + ': ' + message);
@@ -202,3 +202,18 @@ You can add a listener for the `newMix` event to perform actions with the mix da
     $('body').on('newMix', function(e, response) {
         //console.log(response);
     });
+
+**Errors**:
+
+The possible error codes and their corresponding messages are listed below in case you want to perform some kind of special logging for certain errors.
+
+* `invalid_id` - The ID supplied was not valid.
+* `invalid_ids` - One or more of the IDs supplied were not valid.
+* `not_logged` - Could not log track play. Please try again.
+* `no_token` - Could not retrieve play token.
+* `skip_failed` - Could not skip track.
+* `next_failed` - Could not retrieve next track.
+* `next_mix_failed` - Could not retrieve next mix.
+* `find_mix_failed` - Could not retrieve specified mix.
+* `mix_failed` - Could not start mix.
+* `search_failed` - Could not get search results.
