@@ -16,6 +16,39 @@ Usage
 
 More documentation is coming, but you can always read the source to get an idea of what the other methods do and how they work.
 
+**Events**:
+
+Every action the plug-in takes has a corresponding event that gets triggered that you can add an event listener to via the `.on()` method. These events are triggered on the `body`. You can use this as a template for your event bindings:
+
+    $('body').on(eventName, function(e, response) {
+        //eventName should be a string and should be the name of an event
+        //e will contain the event information
+        //response will contain the information returned from the plug-in
+        
+        //some events send more than one parameter to their event listener, they will be noted in the documentation
+        
+        //logic here
+    });
+
+In the event of an error, the plug-in's response will look like this:
+
+    response = {
+    	'error' : 1,
+    	'code' : code, //this will be a string that corresponds to the reason this event failed
+    	'msg' : msg //this will explain why this event failed
+    };
+
+You should check each event's response for an error like so:
+
+    $('body').on(eventName, function(e, response) {
+        //this will ensure any error fields that might exist in the API response are not confused for a plug-in error
+        if(typeof response.error !== 'undefined' && typeof response.code !== 'undefined' && response.error === 1) {
+            //error logic
+        } else {
+            //success logic
+        }
+    });
+
 **Initialization**:
 
     var settings = {
@@ -68,4 +101,18 @@ More documentation is coming, but you can always read the source to get an idea 
         var track_name = track.name;
         var track_by = track.performer;
         var track_stream = track.url;
+    });
+
+**Report Track Play**:
+
+    //NOTE: You MUST do this at the 30 second mark of a playing track.
+    
+    $.eightTracks.logPlay(mix.id, track.id);
+    //or $.eightTracks.logPlay(mix, track);
+    
+    //this will tell the 8tracks.com server that the track has been played so that it can use that information to calculate royalties
+    //you can add a listener for the 'trackLogged' event to perform an action after the track has been logged
+    
+    $('body').on('trackLogged', function(e, data) {
+        //console.log(data);
     });
