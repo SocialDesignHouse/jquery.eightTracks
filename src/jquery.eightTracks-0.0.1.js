@@ -318,9 +318,10 @@
 			if(data.status == '200 OK') {
 				//store returned object
 				search = data;
+				eightTracks.store.results = search;
 
 				//trigger searchResultsFound event
-				$body.trigger('searchResultsFound', data);
+				$body.trigger('searchResultsFound', search);
 			//if search results were not retrieved
 			} else {
 				//trigger eightTracksError event
@@ -394,7 +395,7 @@
 				//save playToken
 				playToken = data['play_token'];
 
-				eightTracks.store.playToken = playToken
+				eightTracks.store.token = playToken
 
 				//trigger playTokenFound event
 				$body.trigger('playTokenFound', data);

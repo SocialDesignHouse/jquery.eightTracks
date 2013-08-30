@@ -21,14 +21,16 @@ More documentation is coming, but you can always read the source to get an idea 
 Every action the plug-in takes has a corresponding event that gets triggered that you can add an event listener to via the `.on()` method. These events are triggered on the `body`. You can use this as a template for your event bindings:
 
     $('body').on(eventName, function(e, response) {
-        //eventName should be a string and should be the name of an event
-        //e will contain the event information
-        //response will contain the information returned from the plug-in
-        
-        //some events send more than one parameter to their event listener, they will be noted in the documentation
-        
         //logic here
     });
+
+`eventName` should be a string and should be the name of an event.
+
+`e` will contain the event information, like type, name, etc and isn't particularly useful in most cases.
+
+`response` will contain the information returned from the plug-in.
+
+Some events send more than one parameter to their event listener, they will be noted in the documentation.
 
 In the event of an error, the plug-in's response will look like this:
 
@@ -49,6 +51,28 @@ You should check each event's response for an error like so:
         }
     });
 
+List of implemented events:
+
+* `playTokenFound`
+* `searchResultsFound`
+* `mixStarted`
+* `newTrack`
+* `playLogged`
+* `newMix`
+* `eightTracksError`
+
+**Data Store**
+
+If you need to access any of the current variables for track, mix, playToken, or search results you can access the `$.eightTracks.store` object.
+
+    $.eightTracks.store.mix; //current mix object
+
+    $.eightTracks.store.track; //current track object
+
+    $.eightTracks.store.token; //current play token
+
+    $.eightTracks.store.results; //current search results object
+
 **Initialization**:
 
     var settings = {
@@ -59,10 +83,11 @@ You should check each event's response for an error like so:
     var key = xxxxxxxx;
     
     $.eightTracks.init(key, settings);
-    
-    //this will initialize the playToken you will need to listen to 8tracks mixes
-    //you can add a listener for the 'playTokenFound' event if you want to save the token or perform another action
-    
+
+This will initialize the playToken you will need to listen to 8tracks mixes.
+
+You can add a listener for the `playTokenFound` event if you want to save the token or perform another action
+
     $('body').on('playTokenFound', function(e, response) {
         //console.log(response);
         
@@ -75,10 +100,11 @@ You should check each event's response for an error like so:
     //or var tag = 'house';
     
     $.eightTracks.tagSearch(tag);
-    
-    //this will search for the tag or collection of tags you send
-    //you can add a listener for the 'searchResultsFound' event to perform actions with the results
-    
+
+This will search for the tag or collection of tags you send and return a set of mixes.
+
+You can add a listener for the `searchResultsFound` event to perform actions with the results
+
     $('body').on('searchResultsFound', function(e, response) {
         //console.log(response);
         
@@ -89,10 +115,11 @@ You should check each event's response for an error like so:
 
     $.eightTracks.startMix(mix.id);
     //or $.eightTracks.startMix(mix);
-    
-    //this will retrieve the first track for the mix, you can send either a mix object or mix id
-    //you can add a listener for the 'mixStarted' event to get the track info
-    
+
+This will retrieve the first track for the mix, you can send either a mix object or mix id.
+
+You can add a listener for the `mixStarted` event to get the track info
+
     $('body').on('mixStarted', function(e, mix, track) {
         //console.log(mix);
         //console.log(track);
@@ -105,14 +132,67 @@ You should check each event's response for an error like so:
 
 **Report Track Play**:
 
-    //NOTE: You MUST do this at the 30 second mark of a playing track.
-    
+NOTE: You MUST do this at the 30 second mark of a playing track.
+
     $.eightTracks.logPlay(mix.id, track.id);
     //or $.eightTracks.logPlay(mix, track);
-    
-    //this will tell the 8tracks.com server that the track has been played so that it can use that information to calculate royalties
-    //you can add a listener for the 'trackLogged' event to perform an action after the track has been logged
-    
-    $('body').on('trackLogged', function(e, data) {
-        //console.log(data);
+
+This will tell the 8tracks.com server that the track has been played so that it can use that information to calculate royalties.
+
+You can add a listener for the `trackLogged` event to perform an action after the track has been logged
+ 
+    $('body').on('trackLogged', function(e, response) {
+        //console.log(response);
+    });
+
+**Next Track**:
+
+NOTE: You MUST use the .skipTrack() method if the user has initiated the next track.
+
+This method is only for when the currently playing track has ended
+
+    $.eightTracks.nextTrack(mix.id);
+    //or $.eightTracks.nextTrack(mix);
+
+This will retrieve the next track in the mix and return that track's information, you can send either a mix object or the mix ID.
+
+You can add a listener for the `newTrack` event to perform actions with the track data.
+
+    $('body').on('newTrack', function(e, response) {
+        //console.log(response);
+    });
+
+**Skip Track**:
+
+    $.eightTracks.skipTrack(mix.id);
+    //or $.eightTracks.skipTrack(mix);
+
+This will retrieve the next track if the user can currently skip, if they are out of skips, it will return an error.
+
+We have set up this method to accept two additional parameters `newMix` and `newMixID`.
+
+`newMix` is boolean and if true the plug-in will attempt to retrieve a new mix if the skip fails.
+
+`newMixID` accepts a mix ID or a mix object and allows you to specify which mix to start if the skip fails
+
+    $.eightTracks.skipTrack(mix.id, true, nextMix.id);
+    //or $.eightTracks.skipTrack(mix.id, true);
+
+You can add a listener for the `newTrack` event to perform actions with the track data
+
+    $('body').on('newTrack', function(e, response) {
+        //console.log(response);
+    });
+
+**Next Mix**:
+
+    $.eightTracks.nextMix(mix.id);
+    //or $.eightTracks.skipTrack(mix);
+
+This will retrieve the next mix in the 8tracks.com similar mixes feed for the current mix. If you want to retrieve the next mix in the search results, you will need to call `$.eightTracks.startMix()` with that mix's ID.
+
+You can add a listener for the `newMix` event to perform actions with the mix data.
+
+    $('body').on('newMix', function(e, response) {
+        //console.log(response);
     });
