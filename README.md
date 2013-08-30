@@ -53,7 +53,7 @@ You should check each event's response for an error like so:
 
 When the plug-in encounters an error, it will always trigger the `eightTracksError` event and send the error code to that event's listener. This is useful if you want to log errors or perform some sort of connection status checks when an error is encountered.
 
-    $('body').on('erightTracksError', function(e, code, message) {
+    $('body').on('eightTracksError', function(e, code, message) {
         console.log(code + ': ' + message);
     });
 
