@@ -117,6 +117,7 @@ You can add a listener for the `searchResultsFound` event to perform actions wit
         //console.log(response);
         
         var mix = response.mixes[0];
+        var mixSet = response.id;
     });
 
 **Start Mix**:
@@ -194,10 +195,12 @@ You can add a listener for the `newTrack` event to perform actions with the trac
 
 **Next Mix**:
 
-    $.eightTracks.nextMix(mix.id);
-    //or $.eightTracks.skipTrack(mix);
+    $.eightTracks.nextMix(mix.id, mixSetID);
+    //or $.eightTracks.skipTrack(mix, mixSetID);
 
-This will retrieve the next mix in the 8tracks.com similar mixes feed for the current mix. If you want to retrieve the next mix in the search results, you will need to call `$.eightTracks.startMix()` with that mix's ID.
+This will retrieve the next mix in the 8tracks.com similar mixes feed for the current mix. If you want to retrieve the next mix in the results, you will need to provide the ID for the Mix Set. This ID is provided as the `id` field in your search results.
+
+
 
 You can add a listener for the `newMix` event to perform actions with the mix data.
 
