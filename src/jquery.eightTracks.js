@@ -1,4 +1,4 @@
-/*! jquery.eightTracks v0.0.1 - Social Design House */
+/*! jquery.eightTracks v0.0.2 - Social Design House */
 
 /*----------------------------------------------------------------------
 
@@ -8,7 +8,7 @@
 	@website			http://socialdesignhouse.com/
 	@license			MIT
 	@copyright			Copyright (c) 2013 Social Design House
-	@version			0.0.1
+	@version			0.0.2
 
 ----------------------------------------------------------------------*/
 
@@ -88,7 +88,7 @@
 	};
 
 	//play a mix by id
-	eightTracks.startMix = function playMix(id) {
+	eightTracks.startMix = function startMix(id) {
 		var _self = this;
 
 		//set up data object for AJAX call
@@ -226,7 +226,7 @@
 	};
 
 	//switch to next mix
-	eightTracks.nextMix = function nextMix(mix) {
+	eightTracks.nextMix = function nextMix(mix, mixSet) {
 		//check mix ID
 		mix = checkID(mix);
 
@@ -237,6 +237,14 @@
 				api_key : apiKey,
 				mix_id : mix
 			};
+
+			if(typeof mixSet !== 'undefined') {
+				mixSet = checkID(mixSet);
+
+				if(mixSet) {
+					data['mix_set_id'] = mixSet;
+				}
+			}
 
 			//send data to server and retrieve JSONP
 			var ajax = $.ajax({
@@ -279,25 +287,40 @@
 		//if we were sent an object or array of tags
 		if(typeof tag === 'object') {
 			//initialize variable to store formatted tag string
-			var tag_str = '';
+			var tag_str = [];
 
 			//itereate through tag object
+			var counter = 0;
+			var arrayIndex = 0;
+			var maxTags = 2;
 			for(var i in tag) {
 				if(tag.hasOwnProperty(i)) {
 					//format tag and append '%2B'
-					tag_str += formatTag(tag[i]) + '%2B';
+					if(counter < (arrayIndex + 1) * maxTags) {
+						if(typeof tag_str[arrayIndex] !== 'undefined' && tag_str[arrayIndex].length) {
+							tag_str[arrayIndex] += formatTag(tag[i]) + '%2B';
+						} else {
+							tag_str[arrayIndex] = formatTag(tag[i]) + '%2B';
+						}
+					} else {
+						arrayIndex++;
 
-					//NOTE: This doesn't make sense to me because "%2B" is the url encoded version of "+",
-					//but that's what the API documentation shows: http://8tracks.com/developers/api#gist4088932
-					//alernate link:  https://gist.github.com/nettofarah/4088932#file-finding_mixes-sh
+						tag_str[arrayIndex] = formatTag(tag[i]) + '%2B';
+					}
+
+					counter++;
 				}
 			}
 
 			//remove extraneous "%2B" from the last tag
-			tag_str = tag_str.substr(0, tag_str.length - 3);
+			for(var i in tag_str) {
+				if(tag_str.hasOwnProperty(i)) {
+					tag_str[i] = tag_str[i].substr(0, tag_str[i].length - 3);
+				}
+			}
 
 			//set tags attribute for AJAX data
-			data['tags'] = tag_str;
+			data['tags'] = tag_str[0];
 		//if we were only sent a single tag
 		} else {
 			//format tag and set tag attribute for AJAX data
@@ -464,13 +487,13 @@
 	//format a tag for being sent to the API
 	function formatTag(tag) {
 		//remove whitespace
-		tag = $.trim(tag);
+		var fTag = $.trim(tag);
 
-		//replace spaces with +
-		tag = tag.replace(' ', '+');
+		//replace spaces with _
+		fTag = fTag.replace(' ', '_');
 
 		//return formatted tag
-		return tag;
+		return fTag;
 	}
 
 	//trigger an error
