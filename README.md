@@ -3,7 +3,9 @@ jquery.eightTracks
 
 A simple jQuery plug-in for dealing with the 8tracks.com API.
 
-It has only been testing with jQuery 2.0.3 so far.
+It only deals with the JSONP API endpoints right now.
+
+It has only been testing with jQuery 2.0.3 so far, but should work with previous versions.
 
 We are starting with anonymous playback and a few other functions, but will add to it over time.
 
@@ -26,7 +28,7 @@ Every action the plug-in takes has a corresponding event that gets triggered tha
 
 `eventName` should be a string and should be the name of an event.
 
-`e` will contain the event information, like type, name, etc and isn't particularly useful in most cases.
+`e` will contain the event information, like type, name, etc and isn't particularly useful for most of this plug-in's events.
 
 `response` will contain the information returned from the plug-in.
 

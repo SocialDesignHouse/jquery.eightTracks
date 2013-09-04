@@ -46,8 +46,7 @@
 	//set up default options
 	var defaults = {
 		perPage : 10,
-		sort : 'hot'
-		//sort options: 'hot', 'popular', 'new'
+		sort : 'hot' //options: 'hot', 'popular', 'new'
 	};
 
 	var errors = {
@@ -287,40 +286,21 @@
 		//if we were sent an object or array of tags
 		if(typeof tag === 'object') {
 			//initialize variable to store formatted tag string
-			var tag_str = [];
+			var tag_str = '';
 
 			//itereate through tag object
-			var counter = 0;
-			var arrayIndex = 0;
-			var maxTags = 2;
 			for(var i in tag) {
 				if(tag.hasOwnProperty(i)) {
 					//format tag and append '%2B'
-					if(counter < (arrayIndex + 1) * maxTags) {
-						if(typeof tag_str[arrayIndex] !== 'undefined' && tag_str[arrayIndex].length) {
-							tag_str[arrayIndex] += formatTag(tag[i]) + '%2B';
-						} else {
-							tag_str[arrayIndex] = formatTag(tag[i]) + '%2B';
-						}
-					} else {
-						arrayIndex++;
-
-						tag_str[arrayIndex] = formatTag(tag[i]) + '%2B';
-					}
-
-					counter++;
+					tag_str += formatTag(tag[i]) + '%2B';
 				}
 			}
 
 			//remove extraneous "%2B" from the last tag
-			for(var i in tag_str) {
-				if(tag_str.hasOwnProperty(i)) {
-					tag_str[i] = tag_str[i].substr(0, tag_str[i].length - 3);
-				}
-			}
+			tag_str = tag_str.substr(0, tag_str.length - 3);
 
 			//set tags attribute for AJAX data
-			data['tags'] = tag_str[0];
+			data['tags'] = tag_str;
 		//if we were only sent a single tag
 		} else {
 			//format tag and set tag attribute for AJAX data
